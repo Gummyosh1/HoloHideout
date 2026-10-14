@@ -1,0 +1,7 @@
+{
+  "name": "holo-hideout",
+  "main": "worker.js",
+  "compatibility_date": "2026-10-13",
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/events"] },
+  "vars": { "GOOGLE_CALENDAR_ID": "connorlafferty0@gmail.com" }
+}

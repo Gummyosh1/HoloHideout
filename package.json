@@ -1,0 +1,13 @@
+{
+  "name": "holo-hideout",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --var SKIP_CALENDAR_CACHE:true",
+    "deploy": "wrangler deploy",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
