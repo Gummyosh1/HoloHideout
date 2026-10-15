@@ -19,7 +19,7 @@
     {
       "binding": "DB",
       "database_name": "holo-hideout-bookings",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "d5710f88-d0a5-48d2-a333-be43374bf5fb",
       "migrations_dir": "migrations"
     }
   ],
