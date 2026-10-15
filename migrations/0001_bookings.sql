@@ -26,11 +26,11 @@ CREATE TABLE request_limits (key TEXT PRIMARY KEY, count INTEGER NOT NULL, expir
 CREATE TABLE audit_log (id INTEGER PRIMARY KEY, actor TEXT NOT NULL, action TEXT NOT NULL, target TEXT NOT NULL, at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
 -- The capacity check executes inside the write transaction, never as a browser read-then-write.
 CREATE TRIGGER reserve_capacity BEFORE INSERT ON orders BEGIN
- SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM events WHERE id=NEW.event_id AND status='published' AND julianday(deadline)>julianday('now') AND julianday(start)>julianday('now')) THEN RAISE(ABORT,'Registration is closed') END;
- SELECT CASE WHEN NEW.quantity + COALESCE((SELECT SUM(quantity) FROM orders WHERE event_id=NEW.event_id AND status IN ('creating','held','paid','refunded')),0) > (SELECT capacity FROM events WHERE id=NEW.event_id) THEN RAISE(ABORT,'Not enough seats remaining') END;
+ SELECT RAISE(ABORT,'Registration is closed') WHERE NOT EXISTS (SELECT 1 FROM events WHERE id=NEW.event_id AND status='published' AND julianday(deadline)>julianday('now') AND julianday(start)>julianday('now'));
+ SELECT RAISE(ABORT,'Not enough seats remaining') WHERE NEW.quantity + COALESCE((SELECT SUM(quantity) FROM orders WHERE event_id=NEW.event_id AND status IN ('creating','held','paid','refunded')),0) > (SELECT capacity FROM events WHERE id=NEW.event_id);
 END;
 CREATE TRIGGER protect_capacity BEFORE UPDATE OF capacity ON events BEGIN
- SELECT CASE WHEN NEW.capacity < COALESCE((SELECT SUM(quantity) FROM orders WHERE event_id=NEW.id AND status IN ('creating','held','paid','refunded')),0) THEN RAISE(ABORT,'Capacity is below existing reservations') END;
+ SELECT RAISE(ABORT,'Capacity is below existing reservations') WHERE NEW.capacity < COALESCE((SELECT SUM(quantity) FROM orders WHERE event_id=NEW.id AND status IN ('creating','held','paid','refunded')),0);
 END;
 CREATE TRIGGER immutable_order_seats BEFORE UPDATE OF quantity,event_id ON orders BEGIN
  SELECT RAISE(ABORT,'Order seats cannot be changed');

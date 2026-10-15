@@ -13,7 +13,11 @@
     ]
   },
   "vars": {
-    "GOOGLE_CALENDAR_ID": "connorlafferty0@gmail.com"
+    "GOOGLE_CALENDAR_ID": "connorlafferty0@gmail.com",
+    "ACCESS_AUD": "6a857d1b7d819012c17e58b233fe0443c460bcff09fa19e828f2fae2c7d8e255",
+    "ACCESS_TEAM_DOMAIN": "square-frog-0116.cloudflareaccess.com",
+    "EMAIL_FROM": "contact@laffertyco.design",
+    "SITE_URL": "https://holo-hideout.summer-lab-b538.workers.dev"
   },
   "d1_databases": [
     {
