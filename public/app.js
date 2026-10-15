@@ -1,3 +1,4 @@
+import {managedEvents,bookingControls} from './bookings.js';
 const zone = 'America/New_York';
 const parts = Object.fromEntries(new Intl.DateTimeFormat('en-US', {timeZone:zone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'numeric',minute:'numeric',hourCycle:'h23'}).formatToParts(new Date()).map(p=>[p.type,p.value]));
 let month = new Date(Date.UTC(+parts.year,+parts.month-1,1));
@@ -39,10 +40,12 @@ async function loadEvents(){
   document.querySelector('#next').disabled=month.getUTCFullYear()>=2100&&month.getUTCMonth()===11;
   list.setAttribute('aria-busy','true');list.replaceChildren(element('p','Loading the schedule…','event-message'));
   try{
-    const response=await fetch(`/api/events?month=${key}`,{signal:AbortSignal.timeout(15000),cache:'no-store'});
-    if(!response.ok)throw new Error('Unavailable');
-    const data=await response.json();
-    if(!Array.isArray(data.events))throw new Error('Invalid schedule');
+    const results=await Promise.allSettled([
+      fetch(`/api/events?month=${key}`,{signal:AbortSignal.timeout(15000),cache:'no-store'}).then(async r=>{if(!r.ok)throw Error('Calendar unavailable');return (await r.json()).events;}),
+      managedEvents(key)
+    ]);
+    if(results.every(r=>r.status==='rejected'))throw Error('Schedule unavailable');
+    const data={events:results.flatMap(r=>r.status==='fulfilled'?r.value:[]).sort((a,b)=>a.start.localeCompare(b.start))};
     if(number!==requestNumber)return;
     const events=data.events.filter(event=>format(eventDate(event),{year:'numeric',month:'2-digit',timeZone:zone}).replace(/(\d{2})\/(\d{4})/,'$2-$1')===key);
     list.replaceChildren();
@@ -56,6 +59,7 @@ async function loadEvents(){
       content.append(element('p',time,'time'));
       if(event.description)content.append(descriptionNode(event.description));
       if(event.location)content.append(element('p',event.location));
+      if(event.managed)content.append(bookingControls(event));
       row.append(badge,content);list.append(row);
     }
   }catch{if(number!==requestNumber)return;const message=element('p','The schedule is taking a break. Please call the shop for upcoming events, or try again.','event-message');const retry=element('button','Try again');retry.addEventListener('click',loadEvents);list.replaceChildren(message,retry);}

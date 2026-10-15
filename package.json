@@ -3,11 +3,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev --var SKIP_CALENDAR_CACHE:true",
+    "dev": "wrangler dev --var SKIP_CALENDAR_CACHE:true --var LOCAL_DEV:true",
     "deploy": "wrangler deploy",
-    "test": "node --test"
+    "test": "node --test",
+    "db:local": "wrangler d1 migrations apply DB --local"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "jose": "^6.2.12"
   }
 }

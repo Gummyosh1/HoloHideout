@@ -1,7 +1,31 @@
 {
   "name": "holo-hideout",
-  "main": "worker.js",
+  "main": "app-worker.js",
   "compatibility_date": "2026-10-13",
-  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": ["/api/events"] },
-  "vars": { "GOOGLE_CALENDAR_ID": "connorlafferty0@gmail.com" }
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/api/*",
+      "/admin",
+      "/admin/*",
+      "/admin.html"
+    ]
+  },
+  "vars": {
+    "GOOGLE_CALENDAR_ID": "connorlafferty0@gmail.com"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "holo-hideout-bookings",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "triggers": {
+    "crons": [
+      "*/5 * * * *"
+    ]
+  }
 }

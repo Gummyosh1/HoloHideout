@@ -1,0 +1,10 @@
+# Copy to .dev.vars for local Stripe TEST-mode checks. Never commit real secrets.
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+BREVO_API_KEY=
+EMAIL_FROM=
+# EMAIL_FROM must be a verified sender email, without a display name.
+# Production values: set these as Cloudflare environment variables/secrets.
+# ACCESS_TEAM_DOMAIN=your-team.cloudflareaccess.com
+# ACCESS_AUD=your-access-application-audience
+# SITE_URL=https://your-production-domain
